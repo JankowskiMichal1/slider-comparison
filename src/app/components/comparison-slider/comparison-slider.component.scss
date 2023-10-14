@@ -1,0 +1,64 @@
+.box {
+  position: relative;
+  height: 400px;
+  width: 600px;
+  // border: solid 3px black;
+}
+
+.first-container {
+  width: 100%;
+  height: 100%;
+  background-color: grey;
+}
+
+.second-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  &-horizontal {
+    width: 50%;
+    height: 100%;
+  }
+
+  &-vertical {
+    width: 100%;
+    height: 50%;
+  }
+}
+
+.first-slot {
+  width: 100%;
+  height: 100%;
+}
+
+.handler-container {
+  position: absolute;
+  background-color: black;
+  &-horizontal {
+    top: 0;
+    left: 50%;
+    height: calc(100% + 20px);
+  }
+
+  &-vertical {  
+    top: 50%;
+    left: 0;
+    width: calc(100% + 20px);
+  }
+}
+
+.handler {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border: solid 1px black;
+  &-horizontal {
+    bottom: -10px;
+    left: 50%;
+  }
+
+  &-vertical {
+    top: 50%;
+    right: -50px;
+  }
+}
