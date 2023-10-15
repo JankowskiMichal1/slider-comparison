@@ -35,13 +35,14 @@
 .handler-container {
   position: absolute;
   background-color: black;
+  cursor: pointer;
   &-horizontal {
     top: 0;
     left: 50%;
     height: calc(100% + 20px);
   }
 
-  &-vertical {  
+  &-vertical {
     top: 50%;
     left: 0;
     width: calc(100% + 20px);
