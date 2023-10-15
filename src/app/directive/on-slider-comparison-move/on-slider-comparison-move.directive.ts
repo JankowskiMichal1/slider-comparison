@@ -6,6 +6,7 @@ import {
   Input,
   Renderer2,
 } from '@angular/core';
+import { ComparisonService } from 'src/app/services/comparison.service';
 
 @Directive({ selector: '[libOnSliderComparisonMove]' })
 export class OnSliderComparisonMoveDirective implements AfterViewInit {
@@ -15,78 +16,77 @@ export class OnSliderComparisonMoveDirective implements AfterViewInit {
   ngAfterViewInit(): void {
     const box: HTMLElement = document.querySelector('.box')!;
     const secondSlot: HTMLElement = document.querySelector('.second-slot')!;
-    const handlerContainer: HTMLElement = document.querySelector('.handler-container')!;
+    const handlerContainer: HTMLElement =
+      document.querySelector('.handler-container')!;
     const handler: HTMLElement = document.querySelector('.handler')!;
-    const secondContainer: HTMLElement = document.querySelector('.second-container')!
+    const secondContainer: HTMLElement =
+      document.querySelector('.second-container')!;
 
+    const boxWidth: string = `${box.offsetWidth}px`;
+    const boxHeight: string = `${box.offsetHeight}px`;
+    this._renderer.setStyle(secondSlot, 'width', boxWidth);
+    this._renderer.setStyle(secondSlot, 'height', boxHeight);
 
-    const boxWidth = `${box.offsetWidth}px`
-    const boxHeight = `${box.offsetHeight}px`
-    this._renderer.setStyle(secondSlot, 'width', boxWidth)
-    this._renderer.setStyle(secondSlot, 'height', boxHeight)
-
-    this.addClass(handlerContainer, 'handler-container-vertical', 'handler-container-horizontal')
-    this.addClass(handler, 'handler-vertical', 'handler-horizontal')
-    this.addClass(secondContainer, 'second-container-vertical', 'second-container-horizontal')
+    this.addClass(
+      handlerContainer,
+      'handler-container-vertical',
+      'handler-container-horizontal'
+    );
+    this.addClass(handler, 'handler-vertical', 'handler-horizontal');
+    this.addClass(
+      secondContainer,
+      'second-container-vertical',
+      'second-container-horizontal'
+    );
   }
 
   constructor(
     private _el: ElementRef<HTMLElement>,
-    private _renderer: Renderer2
+    private _renderer: Renderer2,
+    private _comparisonService: ComparisonService
   ) {}
 
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent) {
     const handler: HTMLElement | null =
       this._el.nativeElement.querySelector('.handler');
-    const mousePositionX = event.clientX;
-    const mousePositionY = event.clientY;
-    const handlerRect = handler?.getBoundingClientRect();
-    if (
-      handlerRect &&
-      mousePositionX >= handlerRect.left &&
-      mousePositionX <= handlerRect.right &&
-      mousePositionY <= handlerRect.bottom &&
-      mousePositionY >= handlerRect.top
-    ) {
-      this._isDragging = true;
-    }
+
+    this._isDragging = this._comparisonService.isMouseOnElement(event, handler);
   }
 
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent) {
     event.preventDefault();
-    if (this._isDragging) {
-      const mousePosition = this.plane === 'vertical' ? event.clientY : event.clientX;
-      const elementX = this.plane === 'vertical' ? this._el.nativeElement.offsetTop : this._el.nativeElement.offsetLeft;
-      const elementPlane = this.plane === 'vertical' ? this._el.nativeElement.offsetHeight : this._el.nativeElement.offsetWidth;
+    if (!this._isDragging) {
+      return;
+    }
 
-      const result = ((mousePosition - elementX) / elementPlane) * 100;
+    const element: HTMLElement | null = this._el.nativeElement;
+    const handler: HTMLElement | null =
+      element.querySelector('.handler-container');
+    const imgContainer: HTMLElement | null =
+      element.querySelector('.second-container');
+    const result: number | null = this._comparisonService.calcComparisonResult(
+      this.plane,
+      event,
+      element,
+      handler
+    );
 
-      const handler: HTMLElement | null =
-        this._el.nativeElement.querySelector('.handler-container');
-      const imgContainer: HTMLElement | null =
-        this._el.nativeElement.querySelector('.second-container');
+    if (!result) {
+      return;
+    }
 
-      const handlerRect: DOMRect | undefined = handler?.getBoundingClientRect()!;
-      const boxRect: DOMRect | undefined =
-        this._el.nativeElement.getBoundingClientRect();
+    if (this.plane === 'horizontal') {
+      this._renderer.setStyle(imgContainer, 'width', `${result}%`);
+      this._renderer.setStyle(handler, 'left', `${result}%`);
+      return;
+    }
 
-      const handlerX = this.plane === 'vertical' ? handlerRect.top : handlerRect.left
-      const handlerY = this.plane === 'vertical' ? handlerRect.bottom : handlerRect.right
-
-
-      if (
-        handlerRect &&
-        boxRect &&
-        handlerRect.left + handlerRect.width >= boxRect.left &&
-        handlerRect.right - handlerRect.width <= boxRect.right &&
-        result <= 100 &&
-        result >= 0
-      ) {
-        this._renderer.setStyle(imgContainer, 'width', `${result}%`);
-        this._renderer.setStyle(handler, 'left', `${result}%`);
-      }
+    if (this.plane === 'vertical') {
+      this._renderer.setStyle(imgContainer, 'height', `${result}%`);
+      this._renderer.setStyle(handler, 'top', `${result}%`);
+      return;
     }
   }
 
@@ -95,11 +95,15 @@ export class OnSliderComparisonMoveDirective implements AfterViewInit {
     this._isDragging = false;
   }
 
-  addClass(element: Element | ChildNode, verticalClass: string, horizontalClass: string): void {
-    if(this.plane === 'vertical'){
-      this._renderer.addClass(element, `${verticalClass}`)
+  addClass(
+    element: Element | ChildNode,
+    verticalClass: string,
+    horizontalClass: string
+  ): void {
+    if (this.plane === 'vertical') {
+      this._renderer.addClass(element, `${verticalClass}`);
     } else {
-      this._renderer.addClass(element, `${horizontalClass}`)
+      this._renderer.addClass(element, `${horizontalClass}`);
     }
   }
 }
