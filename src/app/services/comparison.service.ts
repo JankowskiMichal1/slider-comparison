@@ -7,16 +7,7 @@ export class ComparisonService {
     if (!element) {
       return false;
     }
-
     const handlerRect = element.getBoundingClientRect();
-
-    console.log(
-      'isMouseOnElement: ',
-      mouse.clientX >= handlerRect.left &&
-        mouse.clientX <= handlerRect.right &&
-        mouse.clientY <= handlerRect.bottom &&
-        mouse.clientY >= handlerRect.top
-    );
 
     return (
       mouse.clientX >= handlerRect.left &&
@@ -41,7 +32,6 @@ export class ComparisonService {
     };
 
     if (direction === 'vertical') {
-      console.log('vertical');
       return this._calcVerticalComparisonData(
         mouseCoordinates,
         element,
@@ -50,7 +40,6 @@ export class ComparisonService {
     }
 
     if (direction === 'horizontal') {
-      console.log('horizontal');
       return this._calcHorizontalComparisonData(
         mouseCoordinates,
         element,
