@@ -1,14 +1,14 @@
 <div class="box"
      libOnSliderComparisonMove>
   <div class="first-container">
-    <img class="first-slot" src="https://www.national-geographic.pl/media/cache/slider_big/uploads/media/default/0012/70/nie-uwierzysz-jak-powstalo-najslynniejsze-zdjecie-einsteina-przeczytaj-historie.jpeg"
-         alt="">
+      <ng-content select="[firstSlot]">
+      </ng-content>
   </div>
   <div class="second-container">
-    <img class="second-slot"
-         src="https://m.media-amazon.com/images/M/MV5BYjljNWViYjQtMzU3Mi00NGE3LTllNmYtYmU4MDY3OTA5MDRjXkEyXkFqcGdeQXVyOTk0Nzg4NzU@._V1_.jpg">
+      <ng-content select="[secondSlot]">
+      </ng-content>
   </div>
   <div class="handler-container">
-    <div class="handler">handler</div>
+    <div class="handler"></div>
   </div>
 </div>
