@@ -27,17 +27,12 @@ export class OnSliderComparisonMoveDirective implements AfterViewInit {
     this._renderer.setStyle(secondSlot, 'width', boxWidth);
     this._renderer.setStyle(secondSlot, 'height', boxHeight);
 
-    this.addClass(
+    this._renderer.addClass(
       handlerContainer,
-      'handler-container-vertical',
-      'handler-container-horizontal'
+      `handler-container-${this.plane}`
     );
-    this.addClass(handler, 'handler-vertical', 'handler-horizontal');
-    this.addClass(
-      secondContainer,
-      'second-container-vertical',
-      'second-container-horizontal'
-    );
+    this._renderer.addClass(handler, `handler-${this.plane}`);
+    this._renderer.addClass(secondContainer, `second-container-${this.plane}`);
   }
 
   constructor(
@@ -93,17 +88,5 @@ export class OnSliderComparisonMoveDirective implements AfterViewInit {
   @HostListener('document:mouseup')
   onMouseUp() {
     this._isDragging = false;
-  }
-
-  addClass(
-    element: Element | ChildNode,
-    verticalClass: string,
-    horizontalClass: string
-  ): void {
-    if (this.plane === 'vertical') {
-      this._renderer.addClass(element, `${verticalClass}`);
-    } else {
-      this._renderer.addClass(element, `${horizontalClass}`);
-    }
   }
 }
