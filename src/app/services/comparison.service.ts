@@ -26,6 +26,7 @@ export class ComparisonService {
     if (!element || !handler) {
       return null;
     }
+    
     const mouseCoordinates: CoordinatesModel = {
       x: mouse.clientX,
       y: mouse.clientY,
